@@ -17,6 +17,7 @@ export default function Home() {
             Get started by editing{" "}
             <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
               src/app/page.tsx
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aut, animi quod. Rerum possimus ex reprehenderit minima consequuntur animi quas reiciendis officia dicta. Numquam eligendi culpa placeat! Fugiat repellendus magni sit.
             </code>
             .
           </li>
