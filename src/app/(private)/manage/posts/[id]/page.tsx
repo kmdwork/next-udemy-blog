@@ -1,4 +1,4 @@
-import { getPost } from "@/lib/post";
+// import { getPost } from "@/lib/post";
 import { notFound } from "next/navigation";
 import {
     Card,
@@ -9,6 +9,8 @@ import {
 import Image from "next/image";
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
+import { getOwnPost } from "@/lib/ownPosts";
+import { auth } from "@/auth";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -21,10 +23,15 @@ type Params = {
     params: Promise<{id: string}>
 }
 
-export default async function PostPage({ params } : Params) {
+export default async function ShowPage({ params } : Params) {
+    const session = await auth();
+    const userId = session?.user?.id;
+    if(!session?.user?.email || !userId) {
+      throw new Error('不正なリクエストです')
+    }
 
     const { id } = await params;
-    const post = await getPost(id);
+    const post = await getOwnPost(userId, id);
 
     if(!post) {
         notFound();
@@ -48,17 +55,17 @@ export default async function PostPage({ params } : Params) {
             <CardHeader>
                 <div className="flex justify-baseline items-center mb-4">
                     <p className=" text-sm text-gray-500">
-                        投稿者：{post.auther.name}
+                        投稿者：{session.user.name}
                     </p>
                     <time className="text-sm text-gray-500">
-                        { format(new Date(post.createdAt), 'yyyy年MM月dd日', {locale: ja})}
+                        { format(new Date(post.updatedAt), 'yyyy年MM月dd日', {locale: ja})}
                     </time>
                 </div>
                 <CardTitle className="text-3xl font-bold">{post.title}</CardTitle>
             </CardHeader>
             <CardContent>
-                <div className=" prose max-w-none">
-                     <ReactMarkdown
+              <div className=" prose max-w-none">
+                    <ReactMarkdown
                          remarkPlugins={[remarkGfm]}
                          rehypePlugins={[rehypeHighlight]}
                          skipHtml={false} // HTMLスキップを無効化
